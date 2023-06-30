@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
+/TasksetFront
 .env
 .env.backup
 .env.production
