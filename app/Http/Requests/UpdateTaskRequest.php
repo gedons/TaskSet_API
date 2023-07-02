@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Task;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -11,7 +12,11 @@ class UpdateTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $task = $this->route('task');
+        if ($this->user()->id !== $task->user_id) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -22,7 +27,12 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:1000',                       
+            'description' => 'nullable|string',
+            'due_date' => 'nullable|date',
+            'priority' => 'nullable|in:high,medium,low',
+            'status' => 'nullable|in:finished,pending',
+            'user_id' => 'exists:users,id',
         ];
     }
 }
