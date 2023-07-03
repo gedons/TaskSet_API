@@ -22,7 +22,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::resource('/task', \App\Http\Controllers\TaskController::class);
+    Route::put('/task/{task}/mark-completed', [App\Http\Controllers\TaskController::class, 'markCompleted']);
+    Route::put('/task/{task}/mark-incompleted', [App\Http\Controllers\TaskController::class, 'markIncompleted']);
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
+//Route::get('/dashboard/get_status_chart', [\App\Http\Controllers\DashboardController::class, 'getTaskChart']);
     
 });
 

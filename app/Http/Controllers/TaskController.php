@@ -18,7 +18,7 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        return TaskResource::collection(Task::where('user_id', $user->id)->orderBy('created_at', 'DESC')->paginate(8));
+        return TaskResource::collection(Task::where('user_id', $user->id)->orderBy('created_at', 'DESC')->paginate(7));
     }
 
     /**
@@ -72,5 +72,33 @@ class TaskController extends Controller
 
         $task->delete();
         return response('', 204);
+    }
+
+    public function markCompleted(Task $task)
+    {
+        // Check if the task belongs to the authenticated user
+        if ($task->user_id !== auth()->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Update the task status to "finished"
+        $task->status = 'finished';
+        $task->save();
+
+        return response()->json(['message' => 'Task marked as completed'], 200);
+    }
+
+    public function markIncompleted(Task $task)
+    {
+        // Check if the task belongs to the authenticated user
+        if ($task->user_id !== auth()->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Update the task status to "pending"
+        $task->status = 'pending';
+        $task->save();
+
+        return response()->json(['message' => 'Task marked as incompleted'], 200);
     }
 }
