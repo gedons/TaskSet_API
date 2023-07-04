@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Mail\TaskDueNotification;
 use Illuminate\Http\Request;
 use App\Http\Resources\TaskResource;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Mail;
+
 
 class TaskController extends Controller
 {
@@ -29,6 +32,8 @@ class TaskController extends Controller
         $data = $request->validated();
 
         $task = Task::create($data);
+
+        $task->markAsDue();
 
         return new TaskResource($task);
 
@@ -57,6 +62,8 @@ class TaskController extends Controller
         // Update task in the database
         $task->update($data);
 
+        $task->markAsDue();
+
         return new TaskResource($task);
     }
 
@@ -84,6 +91,7 @@ class TaskController extends Controller
         // Update the task status to "finished"
         $task->status = 'finished';
         $task->save();
+        
 
         return response()->json(['message' => 'Task marked as completed'], 200);
     }
@@ -99,6 +107,21 @@ class TaskController extends Controller
         $task->status = 'pending';
         $task->save();
 
+        $task->markAsDue();
+
         return response()->json(['message' => 'Task marked as incompleted'], 200);
     }
+
+    // public function sendTaskDueNotifications()
+    // {
+    //     $dueTasks = Task::dueTasks();
+
+    //     foreach ($dueTasks as $task) {
+    //         // Get the user associated with the task
+    //         $user = $task->user;
+
+    //         // Send the email notification
+    //         Mail::to($user->email)->send(new TaskDueNotification($task));
+    //     }
+    // }
 }
