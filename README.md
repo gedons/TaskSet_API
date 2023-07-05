@@ -1,4 +1,3 @@
 ## API Endpoints
 
-Coming Soon...
 
